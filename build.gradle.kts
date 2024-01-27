@@ -23,4 +23,6 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("org.apache.commons:commons-lang3:3.14.0")
 
+
+    implementation("com.theokanning.openai-gpt3-java:service:0.18.2")
 }

@@ -9,8 +9,6 @@ import dev.badbird.scraper.util.FileUtils;
 import dev.badbird.scraper.util.QueryBuilder;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
 
@@ -37,8 +35,9 @@ public class Main {
         // https://core.myblueprint.ca/V5/Program/DoSearch?filters%5BPlan%5D=&filters%5BCategory%5D=&filters%5BProvince%5D=%2C1&filters%5BCity%5D=&filters%5BInstitution%5D=&filters%5BProgramType%5D=&filters%5BProgramEduReq%5D=&filters%5BLanguage%5D=en-CA&filters%5BKeyword%5D=Computer%2520Science&filters%5BPreFilterEntityId%5D=&page=0&pagesize=15&_=1706322099004
         String listUrl = "https://core.myblueprint.ca/V5/Program/DoSearch?";
         List<Provinces> provinces = Arrays.asList(Provinces.values());
+        String keywords = "Computer Science";
         QueryBuilder listQuery = new QueryBuilder();
-        listQuery.add("filters[Keyword]", "Computer Science");
+        listQuery.add("filters[Keyword]", keywords);
         listQuery.add("filters[Province]", provinces.stream()
                 .map(Provinces::getUrlParam)
                 .reduce("", (a, b) -> a + b));
@@ -85,6 +84,7 @@ public class Main {
         object.addProperty("start", start);
         object.addProperty("end", end);
         object.addProperty("timeMS", end - start);
+        object.addProperty("keywords", keywords);
         object.add("programs", gson.toJsonTree(programs));
         Files.write(out.toPath(), gson.toJson(object).getBytes());
         /*
@@ -112,7 +112,7 @@ public class Main {
     }
 
     private static final Pattern ENTITY_ID_PROGRAM = Pattern.compile("data-entityid=\"(.*?)\""),
-    KENDO_TIP_PATTERN = Pattern.compile("<span class=\"kendo-tip\" .*>(.*?)</span>");
+            KENDO_TIP_PATTERN = Pattern.compile("<span class=\"kendo-tip\" .*>(.*?)</span>");
 
     private static Program generateProgram(String in) {
         /*
